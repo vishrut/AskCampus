@@ -3,12 +3,17 @@ package com.example.vishrut.myapplication;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
@@ -21,6 +26,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
@@ -108,11 +115,24 @@ public class MapsActivity extends FragmentActivity implements
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private Map markerInfoMap;
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        String[] mDrawerItems = getResources().getStringArray(R.array.drawer_items);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+
+        // Set the adapter for the list view
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, mDrawerItems));
+        // Set the list's click listener
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
         setUpMapIfNeeded();
 
         // Build GoogleApiClient with access to basic profile
@@ -145,6 +165,18 @@ public class MapsActivity extends FragmentActivity implements
         markerInfoMap = new WeakHashMap<Marker, ArrayList<String>>();
         onSearchRequested();
         //handleIntent(getIntent());
+    }
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            selectDrawerItem(position);
+        }
+    }
+
+    private void selectDrawerItem(int position) {
+        mDrawerList.setItemChecked(position, true);
+        mDrawerLayout.closeDrawer(mDrawerList);
     }
 
     @Override
@@ -344,12 +376,13 @@ public class MapsActivity extends FragmentActivity implements
 
                 Statement st = conn.createStatement();
                 String sql;
-                sql = "SELECT name, description, ST_AsGeoJSON(bgeom) from askcampus.campuslocation where name='"+locationName+"' limit 1;";
+                sql = "SELECT name, description, ST_AsGeoJSON(position), ST_AsGeoJSON(bgeom) from askcampus.campuslocation where name='"+locationName+"' limit 1;";
                 ResultSet rs = st.executeQuery(sql);
                 while(rs.next()) {
                     locationInfo.add(rs.getString(1));
                     locationInfo.add(rs.getString(2));
                     locationInfo.add(rs.getString(3));
+                    locationInfo.add(rs.getString(4));
                 }
                 rs.close();
                 st.close();
@@ -363,10 +396,27 @@ public class MapsActivity extends FragmentActivity implements
         protected void onPostExecute(ArrayList<String> locationInfo) {
             Log.i("&&&locationInfo", locationInfo.toString());
             try {
-                JSONObject geoJsonData = new JSONObject(locationInfo.get(2));
-                JSONArray coordArray = geoJsonData.getJSONArray("coordinates");
+                JSONObject positionJsonData = new JSONObject(locationInfo.get(2));
+                JSONObject bGeomJsonData = new JSONObject(locationInfo.get(3));
+                Log.i(TAG+"***position", positionJsonData.toString());
+
+                JSONArray positionCoords = positionJsonData.getJSONArray("coordinates");
+                JSONArray bGeomCoords = bGeomJsonData.getJSONArray("coordinates").getJSONArray(0);
+
+                PolygonOptions bPolygonOptions = new PolygonOptions()
+                                                    .strokeColor(Color.RED)
+                                                    .fillColor(Color.argb(20, 50, 0, 255));
+
+                for(int i=0; i<bGeomCoords.length(); i++){
+                    bPolygonOptions.add(new LatLng( bGeomCoords.getJSONArray(i).getDouble(0),
+                                                    bGeomCoords.getJSONArray(i).getDouble(1)));
+                }
+                Log.i(TAG + "***bgeom", bGeomCoords.toString());
+
+                Polygon polygon = mMap.addPolygon(bPolygonOptions);
+
                 Marker marker = mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(coordArray.getDouble(0), coordArray.getDouble(1)))
+                        .position(new LatLng(positionCoords.getDouble(0), positionCoords.getDouble(1)))
                         .title(locationInfo.get(0))
                         .snippet(locationInfo.get(1)));
 

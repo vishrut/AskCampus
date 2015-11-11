@@ -29,4 +29,9 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <string-array name="drawer_items">
+        <item>See Questions</item>
+        <item>Ask A Question</item>
+    </string-array>
 </resources>
