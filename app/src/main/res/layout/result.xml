@@ -11,10 +11,6 @@
         android:layout_height="wrap_content"
         android:textAppearance="@android:style/TextAppearance.Material.Body1"/>
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"></TableLayout>
-
     <TextView
         android:id="@+id/location_description"
         style="@android:style/TextAppearance.Small"

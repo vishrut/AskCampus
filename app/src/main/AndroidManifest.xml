@@ -20,7 +20,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Material.NoActionBar" >
+        android:theme="@android:style/Theme.Material" >
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -63,14 +63,17 @@
             android:name=".LocationInfoProvider"
             android:authorities="com.example.vishrut.myapplication.LocationInfoProvider" />
 
-        <!--
-            meta-data android:name="android.app.default_searchable"
-            android:value=".SearchableActivity" /
-        -->
-
         <activity
             android:name=".LocationPanelActivity"
             android:label="@string/title_activity_location_panel">
+        </activity>
+
+        <activity
+            android:name=".ListQuestionsActivity">
+        </activity>
+
+        <activity
+            android:name=".AskNewQuestionActivity">
         </activity>
 
     </application>

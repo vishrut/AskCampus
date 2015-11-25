@@ -1,17 +1,38 @@
 package com.example.vishrut.myapplication;
 
 import android.app.Activity;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class LocationPanelActivity extends Activity {
+    private ACUser user;
+    private CampusLocationSerializable sCampusLocation;
+    private static final String TAG = "LocationPanelActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        user = (ACUser)getIntent().getSerializableExtra(MapsActivity.AC_USER);
+        sCampusLocation = (CampusLocationSerializable)getIntent().getSerializableExtra(MapsActivity.CAMPUS_LOCATION);
+
         setContentView(R.layout.activity_location_panel);
+        getActionBar().hide();
+        findViewById(R.id.ask_question_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startListQuestionsActivity();
+            }
+        });
+    }
+
+    private void startListQuestionsActivity(){
+        Intent intent = new Intent(getApplicationContext(), ListQuestionsActivity.class);
+        intent.putExtra(MapsActivity.AC_USER, user);
+        intent.putExtra(MapsActivity.CAMPUS_LOCATION, sCampusLocation);
+        startActivity(intent);
     }
 
     @Override

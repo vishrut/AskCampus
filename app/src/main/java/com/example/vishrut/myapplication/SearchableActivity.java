@@ -28,7 +28,6 @@ import android.widget.AdapterView.OnItemClickListener;
  */
 public class SearchableActivity extends Activity {
 
-    private TextView mTextView;
     private ListView mListView;
 
     @Override
@@ -36,9 +35,9 @@ public class SearchableActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search);
 
-        mTextView = (TextView) findViewById(R.id.text);
+        getActionBar().show();
+
         mListView = (ListView) findViewById(R.id.list);
-        Log.i("&&&&&","searchable activity called");
         handleIntent(getIntent());
     }
 
@@ -72,13 +71,13 @@ public class SearchableActivity extends Activity {
 
         if (cursor == null) {
             // There are no results
-            mTextView.setText(getString(R.string.no_results, new Object[] {query}));
+            getActionBar().setTitle(getString(R.string.no_results, new Object[]{query}));
         } else {
             // Display the number of results
             int count = cursor.getCount();
             String countString = getResources().getQuantityString(R.plurals.search_results,
                     count, new Object[] {count, query});
-            mTextView.setText(countString);
+            getActionBar().setTitle(countString);
 
             // Specify the columns we want to display in the result
             String[] from = new String[] { LocationDbLite.KEY_LOCATION_NAME,
@@ -101,7 +100,6 @@ public class SearchableActivity extends Activity {
                     Intent intent = new Intent();
                     CursorWrapper cw = (CursorWrapper)parent.getAdapter().getItem(position);
                     intent.putExtra("locationName", cw.getString(1));
-                    Log.i("***",cw.getString(1));
                     setResult(100, intent);
                     finish();
                 }

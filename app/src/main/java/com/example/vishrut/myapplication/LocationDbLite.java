@@ -34,7 +34,7 @@ public class LocationDbLite {
 
     private static final String DATABASE_NAME = "locationDbLite";
     private static final String FTS_VIRTUAL_TABLE = "FTSlocations";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 7;
 
     private final LocationDbLiteHelper mDatabaseOpenHelper;
     private static final HashMap<String,String> mColumnMap = buildColumnMap();
