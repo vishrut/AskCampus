@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingLeft="16dp"
     android:paddingRight="16dp">
 
@@ -9,35 +9,35 @@
         android:id="@+id/location_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="LRC - Lyon Recreation Center"
-        android:textAppearance="@android:style/TextAppearance.Material.Body1"
-        android:textStyle="bold"
         android:layout_alignParentStart="true"
         android:paddingTop="16dp"
-        android:textSize="30sp"/>
+        android:text="LRC - Lyon Recreation Center"
+        android:textAppearance="@android:style/TextAppearance.Material.Body1"
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/location_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/location_name"
+        android:paddingBottom="14dp"
+        android:paddingTop="10dp"
         android:text="Gym, basketball courts, swimming pool and other rec facilities"
         android:textAppearance="@android:style/TextAppearance.Material.Body1"
-        android:textStyle="italic"
-        android:layout_alignParentStart="true"
-        android:paddingTop="10dp"
-        android:paddingBottom="14dp"
         android:textSize="20sp"
-        android:layout_below="@id/location_name"/>
+        android:textStyle="italic" />
 
     <View
         android:id="@+id/bar1"
         android:layout_width="fill_parent"
         android:layout_height="2dp"
-        android:background="#c3c3c3"
+        android:layout_alignParentStart="true"
         android:layout_below="@id/location_description"
-        android:layout_alignParentStart="true"/>
+        android:background="#c3c3c3" />
 
-    <RatingBar
+    <!--RatingBar
         android:id="@+id/ratingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -46,9 +46,9 @@
         android:rating="3.5"
         android:layout_alignParentStart="true"
         android:paddingTop="10dp"
-        android:layout_below="@id/bar1"/>
+        android:layout_below="@id/bar1"/-->
 
-    <TextView
+    <!--TextView
         android:id="@+id/numberOfRatings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,9 +59,9 @@
         android:paddingTop="35dp"
         android:textSize="15sp"
         android:layout_toEndOf="@id/ratingBar"
-        android:layout_below="@id/bar1"/>
+        android:layout_below="@id/bar1"/-->
 
-    <TextView
+    <!--TextView
         android:id="@+id/category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -71,9 +71,9 @@
         android:layout_alignParentStart="true"
         android:paddingTop="16dp"
         android:textSize="20sp"
-        android:layout_below="@id/ratingBar"/>
+        android:layout_below="@id/location_description"/-->
 
-    <TextView
+    <!--TextView
         android:id="@+id/openHours"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -84,42 +84,42 @@
         android:textSize="20sp"
         android:textColor = "#66FF33"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/category"/>
+        android:layout_below="@id/category"/-->
 
     <TextView
         android:id="@+id/rushHour"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/bar1"
+        android:paddingBottom="36dp"
+        android:paddingTop="16dp"
         android:text="Current Status: Rushed"
         android:textAppearance="@android:style/TextAppearance.Material.Body1"
-        android:textStyle="bold"
-        android:paddingTop="16dp"
-        android:paddingBottom="36dp"
-        android:textSize="20sp"
         android:textColor = "#FF6600"
-        android:layout_alignParentStart="true"
-        android:layout_below="@id/openHours"/>
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/check_in_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Check In"
-        android:padding="15dp"
-        android:textSize="20sp"
-        android:visibility="visible"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/rushHour"/>
+        android:layout_below="@id/rushHour"
+        android:padding="15dp"
+        android:text="Check In"
+        android:textSize="20sp"
+        android:visibility="visible" />
 
     <Button
         android:id="@+id/ask_question_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ask A Question"
-        android:padding="15dp"
-        android:textSize="20sp"
-        android:visibility="visible"
         android:layout_alignParentEnd="true"
-        android:layout_below="@id/rushHour"/>
+        android:layout_below="@id/rushHour"
+        android:padding="15dp"
+        android:text="Ask A Question"
+        android:textSize="20sp"
+        android:visibility="visible" />
 
 </RelativeLayout>

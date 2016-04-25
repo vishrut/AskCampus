@@ -6,35 +6,36 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp">
 
-    <EditText android:id="@+id/question_field"
+    <EditText
+        android:id="@+id/answer_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:hint="Ask a answer"
+        android:hint="Reply"
         android:padding="12dp" />
 
     <View
         android:id="@+id/height_spacer"
         android:layout_width="match_parent"
         android:layout_height="12dp"
-        android:layout_below="@id/question_field"/>
+        android:layout_below="@id/answer_field" />
 
     <View
         android:id="@+id/width_spacer_right"
         android:layout_width="55dp"
         android:layout_height="0dp"
         android:layout_alignParentEnd="true"
-        android:layout_below="@id/question_field"/>
+        android:layout_below="@id/answer_field" />
 
     <View
         android:id="@+id/width_spacer_left"
         android:layout_width="55dp"
         android:layout_height="0dp"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/question_field"/>
+        android:layout_below="@id/answer_field" />
 
     <Button
-        android:id="@+id/submit_question_button"
+        android:id="@+id/submit_answer_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/height_spacer"
@@ -45,7 +46,7 @@
         android:visibility="visible" />
 
     <Button
-        android:id="@+id/cancel_button"
+        android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/height_spacer"

@@ -12,32 +12,23 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
 
 /**
  * Contains logic to return specific locations from the SQLite location database, and
  * load the locations table when it needs to be created.
  */
 public class LocationDbLite {
-    private static final String TAG = "LocationDbLite";
-
     //The columns we'll include in the locations table
     public static final String KEY_LOCATION_NAME = SearchManager.SUGGEST_COLUMN_TEXT_1;
     public static final String KEY_LOCATIION_DESC = SearchManager.SUGGEST_COLUMN_TEXT_2;
-
+    private static final String TAG = "LocationDbLite";
     private static final String DATABASE_NAME = "locationDbLite";
     private static final String FTS_VIRTUAL_TABLE = "FTSlocations";
-    private static final int DATABASE_VERSION = 7;
-
-    private final LocationDbLiteHelper mDatabaseOpenHelper;
+    private static final int DATABASE_VERSION = 10;
     private static final HashMap<String,String> mColumnMap = buildColumnMap();
+    private final LocationDbLiteHelper mDatabaseOpenHelper;
 
     /**
      * Constructor
@@ -146,9 +137,6 @@ public class LocationDbLite {
      */
     private static class LocationDbLiteHelper extends SQLiteOpenHelper {
 
-        private final Context mHelperContext;
-        private SQLiteDatabase mDatabase;
-
         /* Note that FTS3 does not support column constraints and thus, you cannot
          * declare a primary key. However, "rowid" is automatically used as a unique
          * identifier, so when making requests, we will use "_id" as an alias for "rowid"
@@ -158,6 +146,8 @@ public class LocationDbLite {
                         " USING fts3 (" +
                         KEY_LOCATION_NAME + ", " +
                         KEY_LOCATIION_DESC + ");";
+        private final Context mHelperContext;
+        private SQLiteDatabase mDatabase;
 
         LocationDbLiteHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -190,39 +180,10 @@ public class LocationDbLite {
             Log.d(TAG, "Loading locations...");
             ArrayList<String> index = new ArrayList<>();
 
-            try {
-                Class.forName("org.postgresql.Driver");
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                String endpoint = "spatialinstance.cm2us8yyqh8k.us-west-2.rds.amazonaws.com";
-                String databaseName = "spatialdb";
-                String url = "jdbc:postgresql://" + endpoint + "/" + databaseName;
-
-                Properties props = new Properties();
-                props.setProperty("user", "spatialuser");
-                props.setProperty("password", "spatialdatabase");
-
-                Connection conn = DriverManager.getConnection(url, props);
-
-                Statement st = conn.createStatement();
-                String sql;
-                sql = "SELECT name, description FROM askcampus.campuslocation;";
-                ResultSet rs = st.executeQuery(sql);
-                while(rs.next()) {
-                    String locationName = rs.getString(1);
-                    String description = rs.getString(2);
-                    index.add(locationName+":"+description);
-                    Log.d(TAG, locationName);
-                }
-                rs.close();
-                st.close();
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            String locationName = "LRC";
+            String description = "Lyon Resource Center";
+            index.add(locationName + ":" + description);
+            Log.d(TAG, locationName);
 
             for(String line:index) {
                 String[] strings = TextUtils.split(line, ":");

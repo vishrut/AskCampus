@@ -67,15 +67,20 @@
             android:name=".LocationPanelActivity"
             android:label="@string/title_activity_location_panel">
         </activity>
-
+        <activity android:name=".ListCheckedInLocationsActivity"></activity>
+        <activity android:name=".AskNewQuestionActivity"></activity>
+        <activity android:name=".ListQuestionsActivity" />
         <activity
-            android:name=".ListQuestionsActivity">
+            android:name=".ListAnswerablesActivity"
+            android:label="@string/title_activity_list_answerables">
         </activity>
-
         <activity
-            android:name=".AskNewQuestionActivity">
+            android:name=".ListAnswersActivity"
+            android:label="@string/title_activity_list_answers">
         </activity>
-
+        <activity
+            android:name=".NewAnswerActivity"
+            android:label="@string/title_activity_new_answer"></activity>
     </application>
 
 </manifest>

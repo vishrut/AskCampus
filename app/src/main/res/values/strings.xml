@@ -32,6 +32,9 @@
 
     <string-array name="drawer_items">
         <item>See Questions</item>
-        <item>Ask A Question</item>
     </string-array>
+    <string name="title_activity_list_checked_in_locations">ListCheckedInLocations</string>
+    <string name="title_activity_list_answerables">ListAnswerablesActivity</string>
+    <string name="title_activity_list_answers">ListAnswersActivity</string>
+    <string name="title_activity_new_answer">NewAnswerActivity</string>
 </resources>

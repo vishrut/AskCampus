@@ -4,27 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class AskNewQuestionActivity extends Activity {
+    private static final String TAG = "AskNewQuestionActivity";
     private ACUser user;
     private CampusLocationSerializable sCampusLocation;
-    private static final String TAG = "AskNewQuestionActivity";
     private Connection conn;
 
     @Override
@@ -63,28 +51,6 @@ public class AskNewQuestionActivity extends Activity {
         startActivity(intent);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_location_panel, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     private class SubmitQuestion extends AsyncTask<Void, Void, Integer> {
         String question;
 
@@ -95,16 +61,6 @@ public class AskNewQuestionActivity extends Activity {
 
         @Override
         protected Integer doInBackground(Void... params) {
-            ArrayList<Map<String, String>> questionsList = new ArrayList<>();
-            try {
-                conn = DbHelper.getDatabaseConnection();
-                String insertSql = "INSERT INTO askcampus.question(userid, locationid, content) VALUES("+user.id+","+sCampusLocation.id+",'"+question+"');";
-                PreparedStatement insertPreparedSt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
-                insertPreparedSt.executeUpdate();
-                conn.close();
-            } catch (SQLException e){
-                Log.e(TAG, "Exception while submitting question: " + e);
-            }
             return 1;
         }
 

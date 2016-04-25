@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical">
+
         <ListView
-            android:id="@+id/ql_list"
+            android:id="@+id/locations_list"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="start"
@@ -17,14 +19,4 @@
             android:divider="@android:color/transparent"
             android:dividerHeight="0dp" />
     </LinearLayout>
-    <Button
-        android:id="@+id/ask_new_question_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:padding="15dp"
-        android:text="Ask a new question"
-        android:textSize="20sp"
-        android:visibility="visible" />
 </RelativeLayout>

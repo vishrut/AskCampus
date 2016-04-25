@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
@@ -29,31 +29,22 @@ import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.plus.Plus;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.Serializable;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 public class MapsActivity extends FragmentActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
 
-    private static final String TAG = "MapsActivity";
     public static final String AC_USER = "ACUSER";
     public static final String CAMPUS_LOCATION = "CAMPUS_LOCATION";
-
-
+    public static final String QID = "QID";
+    public static final String QUE = "QUE";
+    public static final String REPLY = "REPLY";
+    private static final String TAG = "MapsActivity";
     /* Request code used to invoke sign in user interactions. */
     private static final int RC_SIGN_IN = 0;
 
@@ -67,6 +58,11 @@ public class MapsActivity extends FragmentActivity implements
     private boolean mShouldResolve = false;
 
     private Connection conn;
+    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private Map markerInfoMap;
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private ACUser user;
 
     // ...
     @Override
@@ -117,12 +113,6 @@ public class MapsActivity extends FragmentActivity implements
         // mStatus.setText(R.string.signing_in);
     }
 
-    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    private Map markerInfoMap;
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private ACUser user;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -167,13 +157,6 @@ public class MapsActivity extends FragmentActivity implements
         });
         markerInfoMap = new HashMap<Marker, CampusLocation>();
         onSearchRequested();
-    }
-
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView parent, View view, int position, long id) {
-            selectDrawerItem(position);
-        }
     }
 
     private void selectDrawerItem(int position) {
@@ -291,7 +274,7 @@ public class MapsActivity extends FragmentActivity implements
                     mGoogleApiClient.connect();
                 }
             } else {
-                Log.e(TAG,"Could not resolve the connection result");
+                Log.e(TAG, "Could not resolve the connection result");
             }
         } else {
             Log.i(TAG, "The user has signed out.");
@@ -337,6 +320,16 @@ public class MapsActivity extends FragmentActivity implements
         mMap.clear();
     }
 
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            Log.i(TAG, Integer.toString(position));
+            Intent intent = new Intent(getApplicationContext(), ListCheckedInLocationsActivity.class);
+            intent.putExtra(MapsActivity.AC_USER, user);
+            startActivity(intent);
+        }
+    }
+
     private class FetchUserInfo extends AsyncTask<Void, Void, ArrayList<String>>{
         String email;
 
@@ -348,30 +341,7 @@ public class MapsActivity extends FragmentActivity implements
         @Override
         protected ArrayList<String> doInBackground(Void... params) {
             ArrayList<String> userInfo = new ArrayList<>();
-            try {
-                conn = DbHelper.getDatabaseConnection();
-                Statement st = conn.createStatement();
-                String fetchSql = "SELECT id from askcampus.user where email='"+email+"' limit 1;";
-                ResultSet fetchRS = st.executeQuery(fetchSql);
-                if(!fetchRS.next()){
-                    Log.i(TAG, "No existing user with the given email found. Creating new user.");
-                    String insertSql = "INSERT INTO askcampus.user(email) VALUES('"+email+"');";
-                    PreparedStatement insertPreparedSt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
-                    insertPreparedSt.executeUpdate();
-                    ResultSet insertRS = insertPreparedSt.getGeneratedKeys();
-                    if (insertRS.next()) {
-                        userInfo.add(insertRS.getString(1));
-                    }
-                    insertRS.close();
-                } else {
-                    userInfo.add(fetchRS.getString(1));
-                    fetchRS.close();
-                }
-                st.close();
-                conn.close();
-            } catch (SQLException e){
-                Log.e(TAG, "Exception while retrieving user info: " + e);
-            }
+            userInfo.add("0");
             return userInfo;
         }
 
@@ -394,63 +364,43 @@ public class MapsActivity extends FragmentActivity implements
         @Override
         protected Map<String, String> doInBackground(Void... params) {
             Map<String, String> locationInfo = new HashMap<>();
-            try {
-                conn = DbHelper.getDatabaseConnection();
-                Statement st = conn.createStatement();
-                String sql;
-                sql = "SELECT id, name, description, ST_AsGeoJSON(position), ST_AsGeoJSON(bgeom) from askcampus.campuslocation where name='"+locationName+"' limit 1;";
-                ResultSet rs = st.executeQuery(sql);
-                if(rs.next()) {
-                    locationInfo.put("id", rs.getString(1));
-                    locationInfo.put("name", rs.getString(2));
-                    locationInfo.put("description", rs.getString(3));
-                    locationInfo.put("position", rs.getString(4));
-                    locationInfo.put("bgeom", rs.getString(5));
-                }
-                rs.close();
-                st.close();
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
             return locationInfo;
         }
 
         @Override
-        protected void onPostExecute(Map<String, String> locationInfo) {
+        protected void onPostExecute(Map<String, String> locationInfos) {
             try {
                 mMap.clear();
 
                 // Create marker
-                JSONObject positionJsonData = new JSONObject(locationInfo.get("position"));
-                JSONArray positionCoords = positionJsonData.getJSONArray("coordinates");
-                LatLng position = new LatLng(positionCoords.getDouble(0), positionCoords.getDouble(1));
+                LatLng position = new LatLng(0, 0); //LRC centre lat-long
 
                 Marker marker = mMap.addMarker(new MarkerOptions()
                         .position(position)
-                        .title(locationInfo.get("name"))
-                        .snippet(locationInfo.get("description")));
+                        .title("LRC")
+                        .snippet("Lyon Recreation Center"));
 
                 // Create polygon
-                JSONObject bGeomJsonData = new JSONObject(locationInfo.get("bgeom"));
-                JSONArray bGeomCoords = bGeomJsonData.getJSONArray("coordinates").getJSONArray(0);
 
                 PolygonOptions bPolygonOptions = new PolygonOptions()
-                                                    .strokeColor(Color.MAGENTA)
+                        .strokeColor(Color.CYAN)
                                                     .fillColor(Color.argb(20, 50, 0, 255));
 
-                for(int i=0; i<bGeomCoords.length(); i++){
-                    bPolygonOptions.add(new LatLng( bGeomCoords.getJSONArray(i).getDouble(0),
-                                                    bGeomCoords.getJSONArray(i).getDouble(1)));
-                }
+
+                bPolygonOptions.add(new LatLng(0, 0));// start lat-long
+                bPolygonOptions.add(new LatLng(0, 0));
+                bPolygonOptions.add(new LatLng(0, 0));
+                bPolygonOptions.add(new LatLng(0, 0));// end lat-long
+                bPolygonOptions.add(new LatLng(0, 0));// start lat-long again
 
                 Polygon bPolygon = mMap.addPolygon(bPolygonOptions);
                 bPolygon.setVisible(true);
 
+
                 // CampusLocation object for easier access
-                CampusLocation cl = new CampusLocation( Integer.parseInt(locationInfo.get("id")),
-                                                        locationInfo.get("name"),
-                                                        locationInfo.get("description"),
+                CampusLocation cl = new CampusLocation(Integer.parseInt("0"),
+                        "LRC",
+                        "Lyon Recreation Center",
                                                         position,
                                                         bPolygon);
 
