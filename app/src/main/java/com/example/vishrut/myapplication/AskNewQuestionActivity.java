@@ -31,7 +31,6 @@ public class AskNewQuestionActivity extends Activity {
             public void onClick(View v) {
                 EditText qEditText = (EditText)findViewById(R.id.question_field);
                 String question = qEditText.getText().toString();
-                if(question.length()>0)
                     new SubmitQuestion(question).execute();
             }
         });
@@ -45,7 +44,7 @@ public class AskNewQuestionActivity extends Activity {
     }
 
     private void startListQuestionsActivity(){
-        Intent intent = new Intent(getApplicationContext(), ListQuestionsActivity.class);
+        Intent intent = new Intent(getApplicationContext(), ListQuestionsActivity2.class);
         intent.putExtra(MapsActivity.AC_USER, user);
         intent.putExtra(MapsActivity.CAMPUS_LOCATION, sCampusLocation);
         startActivity(intent);

@@ -29,8 +29,7 @@ public class NewAnswerActivity extends Activity {
             public void onClick(View v) {
                 EditText answerEditText = (EditText) findViewById(R.id.answer_field);
                 String answer = answerEditText.getText().toString();
-                if (answer.length() > 0)
-                    new SubmitAnswer(answer).execute();
+                new SubmitAnswer(answer).execute();
             }
         });
 
@@ -43,7 +42,7 @@ public class NewAnswerActivity extends Activity {
     }
 
     private void startListAnswersActivity(Integer qid, String question) {
-        Intent intent = new Intent(getApplicationContext(), ListAnswersActivity.class);
+        Intent intent = new Intent(getApplicationContext(), ListAnswersActivity2.class);
         intent.putExtra(MapsActivity.AC_USER, user);
         intent.putExtra(MapsActivity.QID, qid);
         intent.putExtra(MapsActivity.QUE, question);

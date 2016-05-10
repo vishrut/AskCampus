@@ -373,7 +373,7 @@ public class MapsActivity extends FragmentActivity implements
                 mMap.clear();
 
                 // Create marker
-                LatLng position = new LatLng(0, 0); //LRC centre lat-long
+                LatLng position = new LatLng(34.024746, -118.288726); //LRC centre lat-long
 
                 Marker marker = mMap.addMarker(new MarkerOptions()
                         .position(position)
@@ -384,14 +384,14 @@ public class MapsActivity extends FragmentActivity implements
 
                 PolygonOptions bPolygonOptions = new PolygonOptions()
                         .strokeColor(Color.CYAN)
-                                                    .fillColor(Color.argb(20, 50, 0, 255));
+                        .fillColor(Color.argb(20, 50, 0, 255));
 
 
-                bPolygonOptions.add(new LatLng(0, 0));// start lat-long
-                bPolygonOptions.add(new LatLng(0, 0));
-                bPolygonOptions.add(new LatLng(0, 0));
-                bPolygonOptions.add(new LatLng(0, 0));// end lat-long
-                bPolygonOptions.add(new LatLng(0, 0));// start lat-long again
+                bPolygonOptions.add(new LatLng(34.024746, -118.288726));// start lat-long
+                bPolygonOptions.add(new LatLng(34.024351, -118.288980));
+                bPolygonOptions.add(new LatLng(34.024042, -118.288062));
+                bPolygonOptions.add(new LatLng(34.024382, -118.287870));// end lat-long
+                bPolygonOptions.add(new LatLng(34.024746, -118.288726));// start lat-long again
 
                 Polygon bPolygon = mMap.addPolygon(bPolygonOptions);
                 bPolygon.setVisible(true);
